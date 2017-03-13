@@ -3,6 +3,8 @@ var fs = require('fs');
 var stripAnsi = require('strip-ansi');
 var mkdirp = require('mkdirp');
 var extend = require('deep-extend');
+var sleep = require('sleep');
+var lockfile = require('lockfile');
 
 var assets = {};
 var DEFAULT_OUTPUT_FILENAME = 'webpack-stats.json';
@@ -88,12 +90,20 @@ Plugin.prototype.writeOutput = function(compiler, contents) {
     contents.publicPath = compiler.options.output.publicPath;
   }
   mkdirp.sync(path.dirname(outputFilename));
-
+  var lockPath = outputFilename + '.lock'
+  lockfile.lock(lockPath, {'wait': 20}, function(er){
+    console.log("waiting for ", outputFilename, 'lock');
+  });
+  if (fs.existsSync(outputFilename)){
+    this.contents = JSON.parse(fs.readFileSync(outputFilename));
+    console.log(this.contents, 'is the contents')
+  }
   this.contents = extend(this.contents, contents);
   fs.writeFileSync(
     outputFilename,
     JSON.stringify(this.contents, null, this.options.indent)
   );
+  lockfile.unlockSync(lockPath);
 };
 
 module.exports = Plugin;
