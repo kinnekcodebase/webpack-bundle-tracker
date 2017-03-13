@@ -95,8 +95,13 @@ Plugin.prototype.writeOutput = function(compiler, contents) {
     console.log("waiting for ", outputFilename, 'lock');
   });
   if (fs.existsSync(outputFilename)){
-    this.contents = JSON.parse(fs.readFileSync(outputFilename));
-    console.log(this.contents, 'is the contents')
+    try {
+      this.contents = JSON.parse(fs.readFileSync(outputFilename));
+      console.log(this.contents, 'is the contents')
+    } catch(err){
+      console.log('unable to parse existing file so ignoring: ', outputFilename)
+    }
+
   }
   this.contents = extend(this.contents, contents);
   fs.writeFileSync(
