@@ -1,5 +1,5 @@
 {
-  "name": "webpack-bundle-tracker",
+  "name": "webpack-bundle-tracker-kinnek",
   "version": "0.2.0",
   "description": "Spits out some stats about webpack compilation process to a file",
   "license": "MIT",
