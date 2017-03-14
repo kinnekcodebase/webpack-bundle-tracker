@@ -91,7 +91,7 @@ Plugin.prototype.writeOutput = function(compiler, contents) {
   }
   mkdirp.sync(path.dirname(outputFilename));
   var lockPath = outputFilename + '.lock'
-  lockfile.lock(lockPath, function(er){
+  lockfile.lock(lockPath, {wait: 90*1000}, function(er){
     console.log("waiting for ", outputFilename, 'lock');
   });
   if (fs.existsSync(outputFilename)){
@@ -104,7 +104,7 @@ Plugin.prototype.writeOutput = function(compiler, contents) {
     }
 
   }
-  console.log("got past the acquire")
+  console.log("got past acquiring the lock")
   this.contents = extend(this.contents, contents);
   fs.writeFileSync(
     outputFilename,
