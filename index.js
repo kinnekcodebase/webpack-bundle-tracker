@@ -103,6 +103,7 @@ Plugin.prototype.writeOutput = function(compiler, contents) {
     }
 
   }
+  console.log("got past the acquire")
   this.contents = extend(this.contents, contents);
   fs.writeFileSync(
     outputFilename,
