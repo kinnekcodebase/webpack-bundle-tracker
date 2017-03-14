@@ -91,7 +91,7 @@ Plugin.prototype.writeOutput = function(compiler, contents) {
   }
   mkdirp.sync(path.dirname(outputFilename));
   var lockPath = outputFilename + '.lock'
-  lockfile.lock(lockPath, {'wait': 20}, function(er){
+  lockfile.lock(lockPath, {wait: 20*1000}, function(er){
     console.log("waiting for ", outputFilename, 'lock');
   });
   if (fs.existsSync(outputFilename)){
