@@ -92,19 +92,18 @@ Plugin.prototype.writeOutput = function(compiler, contents) {
   mkdirp.sync(path.dirname(outputFilename));
   var lockPath = outputFilename + '.lock'
   lockfile.lock(lockPath, {wait: 90*1000}, function(er){
-    console.log("waiting for ", outputFilename, 'lock');
+    // console.log("waiting for ", outputFilename, 'lock');
   });
   if (fs.existsSync(outputFilename)){
     try {
       this.contents = JSON.parse(fs.readFileSync(outputFilename));
-      console.log(contents, 'is whats being added')
-      //console.log(this.contents, 'is the contents')
+      console.log('ADDING:', contents)
     } catch(err){
       console.log('unable to parse existing file so ignoring: ', outputFilename)
     }
 
   }
-  console.log("got past acquiring the lock")
+  // console.log("got past acquiring the lock")
   this.contents = extend(this.contents, contents);
   fs.writeFileSync(
     outputFilename,
