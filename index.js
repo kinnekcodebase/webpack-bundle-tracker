@@ -84,32 +84,48 @@ Plugin.prototype.apply = function(compiler) {
 
 
 Plugin.prototype.writeOutput = function(compiler, contents) {
-  var outputDir = this.options.path || '.';
-  var outputFilename = path.join(outputDir, this.options.filename || DEFAULT_OUTPUT_FILENAME);
+  var self = this;
+  var filename = this.options.filename || DEFAULT_OUTPUT_FILENAME;
+  var outputDirs = [];
+  var outputFilenames = [];
+
+  if (contents && contents.chunks) {
+    for (var key in contents.chunks) {
+      if (!contents.chunks.hasOwnProperty(key)) continue;
+      var dir = self.options.path.replace('[name]', key);
+      outputDirs.push(dir);
+      outputFilenames.push(path.join(dir, filename));
+    }
+  } else {
+    var dir = self.options.path || '.';
+    dir = self.options.path.replace('[name]', '');
+    outputDirs = [dir];
+    outputFilenames = [path.join(dir, filename)];
+  }
+
   if (compiler.options.output.publicPath) {
     contents.publicPath = compiler.options.output.publicPath;
   }
-  mkdirp.sync(path.dirname(outputFilename));
-  var lockPath = outputFilename + '.lock'
-  lockfile.lock(lockPath, {wait: 90*1000}, function(er){
-    // console.log("waiting for ", outputFilename, 'lock');
-  });
-  if (fs.existsSync(outputFilename)){
-    try {
-      this.contents = JSON.parse(fs.readFileSync(outputFilename));
-      console.log('ADDING:', contents)
-    } catch(err){
-      console.log('unable to parse existing file so ignoring: ', outputFilename)
+
+  outputFilenames.forEach(function (file) {
+    var lockPath = file + '.lock'
+    mkdirp.sync(path.dirname(file));
+    lockfile.lock(lockPath, {wait: 90*1000}, function(err){});
+
+    if (fs.existsSync(file)){
+      try {
+        self.contents = JSON.parse(fs.readFileSync(file));
+      } catch(err){
+        console.log('unable to parse existing file so ignoring: ', file)
+      }
     }
 
-  }
-  // console.log("got past acquiring the lock")
-  this.contents = extend(this.contents, contents);
-  fs.writeFileSync(
-    outputFilename,
-    JSON.stringify(this.contents, null, this.options.indent)
-  );
-  lockfile.unlockSync(lockPath);
+    self.contents = extend(self.contents, contents);
+
+    var formattedContents = JSON.stringify(self.contents, null, self.options.indent);
+    fs.writeFileSync(file, formattedContents);
+    lockfile.unlockSync(lockPath);
+  });
 };
 
 module.exports = Plugin;
