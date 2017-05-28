@@ -31,7 +31,6 @@
     "deep-extend": "^0.4.1",
     "lockfile": "^1.0.3",
     "mkdirp": "^0.5.1",
-    "sleep": "^5.1.0",
     "strip-ansi": "^2.0.1"
   }
 }

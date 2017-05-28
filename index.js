@@ -3,7 +3,6 @@ var fs = require('fs');
 var stripAnsi = require('strip-ansi');
 var mkdirp = require('mkdirp');
 var extend = require('deep-extend');
-var sleep = require('sleep');
 var lockfile = require('lockfile');
 
 var assets = {};
