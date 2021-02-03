@@ -22,7 +22,7 @@ function Plugin(options) {
 Plugin.prototype.apply = function(compiler) {
     var self = this;
 
-    compiler.plugin('compilation', function(compilation, callback) {
+    compiler.hooks.emit.tapAsync('compilation', function(compilation, callback) {
       compilation.plugin('failed-module', function(fail){
         var output = {
           status: 'error',
@@ -38,11 +38,11 @@ Plugin.prototype.apply = function(compiler) {
       });
     });
 
-    compiler.plugin('compile', function(factory, callback) {
+    compiler.hooks.emit.tapAsync('compile', function(factory, callback) {
       self.writeOutput(compiler, {status: 'compiling'});
     });
 
-    compiler.plugin('done', function(stats){
+    compiler.hooks.emit.tapAsync('done', function(stats){
       if (stats.compilation.errors.length > 0) {
         var error = stats.compilation.errors[0];
         self.writeOutput(compiler, {
