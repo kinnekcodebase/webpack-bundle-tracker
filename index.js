@@ -23,7 +23,7 @@ Plugin.prototype.apply = function(compiler) {
     var self = this;
 
     compiler.hooks.emit.tapAsync('compilation', function(compilation, callback) {
-      compilation.plugin('failed-module', function(fail){
+      compilation.hooks.emit.tapAsync('failed-module', function(fail){
         var output = {
           status: 'error',
           error: fail.error.name || 'unknown-error'
