@@ -106,9 +106,6 @@ Plugin.prototype.writeOutput = function(compiler, contents) {
     contents.publicPath = compiler.options.output.publicPath;
   }
 
-  console.log('path', path);
-  console.log('outputFilenames', outputFilenames);
-
   outputFilenames.forEach(function (file) {
     var lockPath = file + '.lock'
     mkdirp.sync(path.dirname(file));
