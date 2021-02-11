@@ -22,8 +22,8 @@ function Plugin(options) {
 Plugin.prototype.apply = function(compiler) {
     var self = this;
 
-    compiler.hooks.compilation.tap('Plugin', function(compilation, callback) {
-      compilation.hooks.failedModule.tap('Plugin', function(fail){
+    compiler.plugin('compilation', function(compilation, callback) {
+      compilation.plugin('failed-module', function(fail){
         var output = {
           status: 'error',
           error: fail.error.name || 'unknown-error'
@@ -38,11 +38,11 @@ Plugin.prototype.apply = function(compiler) {
       });
     });
 
-    compiler.hooks.compile.tap('Plugin', function(factory, callback) {
+    compiler.plugin('compile', function(factory, callback) {
       self.writeOutput(compiler, {status: 'compiling'});
     });
 
-    compiler.hooks.done.tap('Plugin', function(stats){
+    compiler.plugin('done', function(stats){
       if (stats.compilation.errors.length > 0) {
         var error = stats.compilation.errors[0];
         self.writeOutput(compiler, {
